@@ -3,11 +3,13 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 let chatSession = null;
 
 function initializeChat() {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const apiKey = "AIzaSyBG5BmMvPy-Xn4HAJnamuCnoSS192aV6ig"; // Hardcoded for testing
   
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY is not set");
   }
+  
+  // ... rest of code
 
   const genAI = new GoogleGenerativeAI({
     apiKey: apiKey,
