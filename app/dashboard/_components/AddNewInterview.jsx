@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { chatSession } from '@/utils/GeminiAIModal'
+import { getChatSession } from '@/utils/GeminiAIModal'
 import { LoaderCircle } from 'lucide-react'
 import { db } from '@/utils/db'
 import { MockInterview } from '@/utils/schema'
@@ -30,17 +30,26 @@ function AddNewInterview() {
     const router=useRouter();
     const {user}=useUser();
     const onSubmit=async(e)=>{
-        setLoading(true)
-        e.preventDefault()
-        console.log(jobPosition,jobDesc,jobExperience);
-
-        const InputPrompt="Job position: "+jobPosition+", Job Description: "+jobDesc+", Years of Experience : "+jobExperience+" , Depends on Job Position, Job Description & Years of Experience give us "+process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT+"in that 1st Question should be tell about yourself, 2nd Question is   Interview question along with Answer in JSON format, Give us question and answer field on JSON"
+    setLoading(true)
+    e.preventDefault()
+    
+    try {
+        const chatSession = getChatSession();
+        
+        const InputPrompt="Job position: "+jobPosition+", Job Description: "+jobDesc+", Years of Experience : "+jobExperience+" , Depends on Job Position, Job Description & Years of Experience give us "+process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT+"in that 1st Question..."
 
         const result=await chatSession.sendMessage(InputPrompt);
         const MockJsonResp=(result.response.text()).replace('```json','').replace('```','')
         console.log(JSON.parse(MockJsonResp));
         setJsonResponse(MockJsonResp);
-
+        
+        // ... rest of code
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to generate interview: " + error.message);
+    }
+    setLoading(false);
+}
         if(MockJsonResp)
         {
         const resp=await db.insert(MockInterview)
@@ -125,5 +134,4 @@ function AddNewInterview() {
     </div>
   )
 }
-
 export default AddNewInterview
