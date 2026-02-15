@@ -9,10 +9,16 @@ function initializeChat() {
     throw new Error("GEMINI_API_KEY is not set");
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const genAI = new GoogleGenerativeAI({
+    apiKey: apiKey,
+    // Force API version
+    defaultOptions: {
+      apiVersion: 'v1'
+    }
+  });
   
   const model = genAI.getGenerativeModel({
-    model: "gemini-pro",
+    model: "gemini-1.5-flash",
   });
 
   const generationConfig = {
