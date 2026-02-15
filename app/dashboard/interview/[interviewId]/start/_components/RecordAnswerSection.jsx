@@ -6,7 +6,7 @@ import Webcam from 'react-webcam'
 import useSpeechToText from 'react-hook-speech-to-text';
 import { Mic, StopCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import { chatSession } from '@/utils/GeminiAIModal'
+import { getChatSession } from '@/utils/GeminiAIModal'
 import { db } from '@/utils/db'
 import { UserAnswer } from '@/utils/schema'
 import { useUser } from '@clerk/nextjs'
@@ -64,7 +64,7 @@ function RecordAnswerSection({mockInterviewQuestion,activeQuestionIndex,intervie
         " please give us rating for answer and feedback as area of improvmenet if any "+
         "in just 3 to 5 lines to improve it in JSON format with rating field and feedback field";
 
-        const result=await chatSession.sendMessage(feedbackPrompt);
+        const result=await getChatSession().sendMessage(feedbackPrompt);
         const mockJsonResp=(result.response.text()).replace('```json','').replace('```','');
         const JsonFeedbackResp=JSON.parse(mockJsonResp);
         const resp=await db.insert(UserAnswer)

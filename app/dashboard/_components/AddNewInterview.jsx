@@ -6,7 +6,6 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
   } from "@/components/ui/dialog"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,20 +27,33 @@ function AddNewInterview() {
     const [loading,setLoading]=useState(false);
     const [jsonResponse,setJsonResponse]=useState([]);
     const router=useRouter();
-    const {user}=useUser();
+    const {user, isLoaded}=useUser();
     
     const onSubmit=async(e)=>{
         setLoading(true)
         e.preventDefault()
         
+        if (!isLoaded || !user?.primaryEmailAddress?.emailAddress) {
+            alert("User not loaded yet. Please wait a moment and try again.");
+            setLoading(false);
+            return;
+        }
+
         try {
             const chatSession = getChatSession();
             
             const InputPrompt="Job position: "+jobPosition+", Job Description: "+jobDesc+", Years of Experience : "+jobExperience+" , Depends on Job Position, Job Description & Years of Experience give us "+process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT+" in that 1st Question should be tell about yourself, 2nd Question is Interview question along with Answer in JSON format, Give us question and answer field on JSON"
 
             const result=await chatSession.sendMessage(InputPrompt);
-            const MockJsonResp=(result.response.text()).replace('```json','').replace('```','')
-            console.log(JSON.parse(MockJsonResp));
+            const rawText = result.response.text();
+            const MockJsonResp = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+            
+            try {
+                console.log(JSON.parse(MockJsonResp));
+            } catch (parseError) {
+                console.error("Raw AI response:", rawText);
+                throw new Error("AI returned invalid JSON. Please try again.");
+            }
             setJsonResponse(MockJsonResp);
             
             if(MockJsonResp) {

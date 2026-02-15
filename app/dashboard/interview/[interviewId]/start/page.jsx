@@ -25,8 +25,12 @@ function StartInterview({params}) {
         .where(eq(MockInterview.mockId,params.interviewId))
 
         const jsonMockResp=JSON.parse(result[0].jsonMockResp);
-        console.log(jsonMockResp)
-        setMockInterviewQuestion(jsonMockResp);
+        console.log(jsonMockResp);
+        // Handle both array and object responses from Gemini
+        const questions = Array.isArray(jsonMockResp) 
+            ? jsonMockResp 
+            : Object.values(jsonMockResp).find(v => Array.isArray(v)) || [];
+        setMockInterviewQuestion(questions);
         setInterviewData(result[0]);
     } 
   return (
