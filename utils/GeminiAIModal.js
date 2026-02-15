@@ -20,7 +20,7 @@ function initializeChat() {
   });
   
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-pro-2.0-flash",
   });
 
   const generationConfig = {
