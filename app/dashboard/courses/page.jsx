@@ -40,7 +40,7 @@ const courses = [
     image: "/courese3.png",
   },
   {
-    title: "Upgrade Your Communication"
+    title: "Upgrade Your Communication",
     instructor: "Anton Voroniuk",
     rating: "4.6",
     reviews: "290",
@@ -110,3 +110,4 @@ export default function Page() {
     </div>
   );
 }
+
